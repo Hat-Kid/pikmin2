@@ -89,6 +89,10 @@ struct VsGameSection : public BaseGameSection {
 
 	Pellet* createCardPellet();
 
+	inline VsGame::State* getCurrentState() { return mState; }
+	inline void resetCurrentState() { mState = nullptr; }
+	inline void initState(VsGameSection* section, FSMState<VsGameSection>* state, StateArg* stateArg); // definition in VsGame.h
+
 	static int mRedWinCount;
 	static int mBlueWinCount;
 	static int mDrawCount;

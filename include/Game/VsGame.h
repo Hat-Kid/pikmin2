@@ -543,6 +543,14 @@ struct TitleState : public State {
 };
 /////////////////////////////////////////////////////////////////
 } // namespace VsGame
+
+// here bc it needs VsGame::State defined
+inline void VsGameSection::initState(VsGameSection* section, FSMState<VsGameSection>* state, StateArg* stateArg)
+{
+	VsGame::State* newState = static_cast<VsGame::State*>(state);
+	section->mState         = newState;
+	newState->init(section, stateArg);
+}
 } // namespace Game
 
 #endif

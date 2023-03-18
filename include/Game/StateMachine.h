@@ -3,6 +3,10 @@
 
 #include "types.h"
 
+#define GETCURRSTATE(obj)               (obj)->getCurrentState()
+#define RESETCURRSTATE(obj)             (obj)->resetCurrentState()
+#define INITSTATE(obj, state, stateArg) (obj)->initState((obj), (state), (stateArg))
+
 namespace Game {
 template <typename T>
 struct StateMachine;
@@ -41,35 +45,57 @@ struct StateMachine {
 	{
 	}
 
-	virtual void init(T*);                    // _08
-	virtual void start(T*, int, StateArg*);   // _0C
-	virtual void exec(T*);                    // _10
-	virtual void transit(T*, int, StateArg*); // _14
+	virtual void init(T*) { }                                   // _08
+	virtual void start(T* obj, int stateID, StateArg* stateArg) // _0C
+	{
+		RESETCURRSTATE(obj);
+		transit(obj, stateID, stateArg);
+	}
+	virtual void exec(T* obj) // _10
+	{
+		if (GETCURRSTATE(obj)) {
+			GETCURRSTATE(obj)->exec(obj);
+		}
+	}
+	virtual void transit(T* obj, int stateID, StateArg* stateArg) // _14
+	{
+		int stateIndex            = mIdToIndexArray[stateID];
+		FSMState<T>* currentState = GETCURRSTATE(obj);
+		if (currentState) {
+			currentState->cleanup(obj);
+			mCurrentID = currentState->mId;
+		}
+		if (stateIndex >= mLimit) {
+			while (true)
+				;
+		}
+		INITSTATE(obj, mStates[stateIndex], stateArg);
+	}
 
 	// #pragma dont_inline on
-	void create(int limit);
-	// {
-	// 	mLimit          = limit;
-	// 	mCount          = 0;
-	// 	mStates         = new FSMState<T>*[mLimit];
-	// 	mIndexToIDArray = new int[mLimit];
-	// 	mIdToIndexArray = new int[mLimit];
-	// }
+	void create(int limit)
+	{
+		mLimit          = limit;
+		mCount          = 0;
+		mStates         = new FSMState<T>*[mLimit];
+		mIndexToIDArray = new int[mLimit];
+		mIdToIndexArray = new int[mLimit];
+	}
 
-	void registerState(FSMState<T>* state);
-	// {
-	// 	if (mLimit <= mCount) {
-	// 		return;
-	// 	}
-	// 	mStates[mCount] = state;
-	// 	if (!(-1 < state->mId && state->mId < mLimit)) {
-	// 		return;
-	// 	}
-	// 	state->mStateMachine = this;
-	// 	mIndexToIDArray[mCount] = state->mId;
-	// 	mIdToIndexArray[state->mId] = mCount;
-	// 	mCount++;
-	// }
+	void registerState(FSMState<T>* state)
+	{
+		if (mLimit <= mCount) {
+			return;
+		}
+		mStates[mCount] = state;
+		if (!(-1 < state->mId && state->mId < mLimit)) {
+			return;
+		}
+		state->mStateMachine        = this;
+		mIndexToIDArray[mCount]     = state->mId;
+		mIdToIndexArray[state->mId] = mCount;
+		mCount++;
+	}
 	// #pragma dont_inline reset
 
 	int getCurrID(T*);

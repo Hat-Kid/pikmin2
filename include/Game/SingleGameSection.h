@@ -77,6 +77,10 @@ struct SingleGameSection : public BaseGameSection {
 	void updateMainMapScreen();
 	void drawCaveScreen();
 
+	inline SingleGame::State* getCurrentState() { return mCurrentState; }
+	inline void resetCurrentState() { mCurrentState = nullptr; }
+	inline void initState(SingleGameSection* section, FSMState<SingleGameSection>* state, StateArg* stateArg); // definition in SingleGame.h
+
 	f32 mTimer;                                    // _174
 	bool mTimerEnabled;                            // _178
 	u32 mTimerType;                                // _17C
@@ -100,7 +104,7 @@ struct SingleGameSection : public BaseGameSection {
 	efx::TChasePos* _244;                          // _244
 	int mCurrentFloor;                             // _248
 	Game::SingleGame::FSM* mFsm;                   // _24C
-	Game::SingleGame::GameState* mCurrentState;    // 250
+	Game::SingleGame::State* mCurrentState;        // 250
 	KindCounter _254;                              // _254
 	KindCounter _25C;                              // _25C
 	KindCounter mOtakaraCounter;                   // _264

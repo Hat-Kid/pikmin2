@@ -152,6 +152,13 @@ struct Item : public WorkItem<Item, FSM, State> {
 	f32 getWorkRadius();
 	void createBarrel();
 
+	inline void initState(Item* item, FSMState<Item>* state, StateArg* stateArg)
+	{
+		ItemBarrel::State* newState = static_cast<ItemBarrel::State*>(state);
+		item->mCurrentState         = newState;
+		newState->init(item, stateArg);
+	}
+
 	// _00      = VTBL
 	// _00-_1EC = WorkItem
 	f32 mHealth;       // _1EC
@@ -166,15 +173,13 @@ struct Item : public WorkItem<Item, FSM, State> {
 struct Mgr : public TNodeItemMgr {
 	Mgr();
 
-	// vtable 1
-	virtual void onLoadResources();                                       // _48
-	virtual u32 generatorGetID() { return 'barl'; }                       // _58 (weak)
-	virtual BaseItem* generatorBirth(Vector3f&, Vector3f&, GenItemParm*); // _5C
+	virtual void onLoadResources(); // _48
 
-	// vtable 2
-	virtual BaseItem* doNew() { return new Item(); } // _A0 (weak)
-	virtual ~Mgr() { }                               // _B8 (weak, thunked at _00)
-	virtual BaseItem* birth();                       // _BC (Yes, TNodeItemMgr::birth() isn't virtual, but this is. Deal with it.)
+	virtual BaseItem* generatorBirth(Vector3f&, Vector3f&, GenItemParm*); // _5C
+	virtual BaseItem* doNew() { return new Item(); }                      // _A0 (weak)
+	virtual u32 generatorGetID() { return 'barl'; }                       // _58 (weak)
+	// virtual ~Mgr() { }                               // _B8 (weak, thunked at _00)
+	virtual BaseItem* birth(); // _BC (Yes, TNodeItemMgr::birth() isn't virtual, but this is. Deal with it.)
 
 	// _00     = VTBL 1
 	// _30     = VTBL 2

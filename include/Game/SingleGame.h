@@ -576,6 +576,15 @@ struct ZukanState : public State {
 	int _114;                          // _114
 };
 } // namespace SingleGame
+
+// here bc it needs SingleGame::State defined
+inline void SingleGameSection::initState(SingleGameSection* section, FSMState<SingleGameSection>* state, StateArg* stateArg)
+{
+	SingleGame::State* newState = static_cast<SingleGame::State*>(state);
+	section->mCurrentState      = newState;
+	newState->init(section, stateArg);
+}
+
 } // namespace Game
 
 #endif

@@ -229,6 +229,9 @@ struct FSMItem : public BaseItem {
 		}
 	}
 
+	inline StateClass* getCurrentState() { return mCurrentState; }
+	inline void resetCurrentState() { mCurrentState = nullptr; }
+
 	FSMClass* mFsm;            // _1D8
 	StateClass* mCurrentState; // _1DC
 };

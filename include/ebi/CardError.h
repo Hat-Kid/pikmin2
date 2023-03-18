@@ -587,6 +587,15 @@ struct TMgr : Screen::TMemoryCard {
 	TMgr();
 	~TMgr();
 
+	inline FSMState* getCurrentState() { return mCurrentState; }
+	inline void resetCurrentState() { mCurrentState = nullptr; }
+	inline void initState(TMgr* mgr, Game::FSMState<TMgr>* state, Game::StateArg* stateArg)
+	{
+		FSMState* newState = static_cast<FSMState*>(state);
+		mgr->mCurrentState = newState;
+		newState->init(mgr, stateArg);
+	}
+
 	// _00-_298 = TMemoryCard
 	u32 mCounter;                  // _298
 	int _29C;                      // _29C

@@ -187,6 +187,19 @@ struct PelletKillArg : public CreatureKillArg {
 	u8 _08; // _08
 };
 
+struct PelletState : public FSMState<Pellet> {
+	PelletState(int id)
+	    : FSMState<Pellet>(id)
+	{
+	}
+
+	virtual bool isBuried();                    // _20 (weak)
+	virtual bool appeared();                    // _24 (weak)
+	virtual bool isPickable() { return false; } // _28 (weak)
+
+	u8 _0C[0x4]; // _0C
+};
+
 /**
  * @size = 0x458
  */
@@ -419,6 +432,15 @@ struct Pellet : public DynCreature, public SysShape::MotionListener, public Carr
 
 	inline f32 getStickRadius() { return mConfig->mParams.mRadius.mData; }
 
+	inline PelletState* getCurrentState() { return mPelletState; }
+	inline void resetCurrentState() { mPelletState = nullptr; }
+	inline void initState(Pellet* pellet, FSMState<Pellet>* state, StateArg* stateArg)
+	{
+		PelletState* newState = static_cast<PelletState*>(state);
+		pellet->mPelletState  = newState;
+		newState->init(pellet, stateArg);
+	}
+
 	// _00		= VTABLE 1
 	// _04-_314	= DYNCREATURE
 	// _318 	= VTABLE 2? 3?
@@ -509,19 +531,6 @@ struct PelletReturnStateArg : public StateArg {
 	inline PelletReturnStateArg(Vector3f& pos) { mPosition = pos; }
 
 	Vector3f mPosition; // _00
-};
-
-struct PelletState : public FSMState<Pellet> {
-	PelletState(int id)
-	    : FSMState<Pellet>(id)
-	{
-	}
-
-	virtual bool isBuried();                    // _20 (weak)
-	virtual bool appeared();                    // _24 (weak)
-	virtual bool isPickable() { return false; } // _28 (weak)
-
-	u8 _0C[0x4]; // _0C
 };
 
 struct PelletAppearState : public PelletState {

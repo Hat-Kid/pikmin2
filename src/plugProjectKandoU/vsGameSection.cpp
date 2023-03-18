@@ -220,16 +220,16 @@ void VsGameSection::onInit()
 	}
 }
 
-/*
- * --INFO--
- * Address:	801C13E4
- * Size:	000034
- */
-void StateMachine<VsGameSection>::start(VsGameSection* section, int stateID, StateArg* arg)
-{
-	section->mState = nullptr;
-	transit(section, stateID, arg);
-}
+// /*
+//  * --INFO--
+//  * Address:	801C13E4
+//  * Size:	000034
+//  */
+// void StateMachine<VsGameSection>::start(VsGameSection* section, int stateID, StateArg* arg)
+// {
+// 	section->mState = nullptr;
+// 	transit(section, stateID, arg);
+// }
 
 /*
  * --INFO--
@@ -1575,88 +1575,88 @@ char* VsGameSection::getEditorFilename() { return mEditFilename; }
  */
 int VsGameSection::getVsEditNumber() { return mEditNumber; }
 
-/*
- * --INFO--
- * Address:	801C49E0
- * Size:	000004
- */
-void StateMachine<VsGameSection>::init(VsGameSection*) { }
+// /*
+//  * --INFO--
+//  * Address:	801C49E0
+//  * Size:	000004
+//  */
+// void StateMachine<VsGameSection>::init(VsGameSection*) { }
 
-/*
- * --INFO--
- * Address:	801C49E4
- * Size:	000064
- */
-void StateMachine<VsGameSection>::create(int states)
-{
-	mLimit          = states;
-	mCount          = 0;
-	mStates         = new FSMState<VsGameSection>*[mLimit];
-	mIndexToIDArray = new int[mLimit];
-	mIdToIndexArray = new int[mLimit];
-}
+// /*
+//  * --INFO--
+//  * Address:	801C49E4
+//  * Size:	000064
+//  */
+// void StateMachine<VsGameSection>::create(int states)
+// {
+// 	mLimit          = states;
+// 	mCount          = 0;
+// 	mStates         = new FSMState<VsGameSection>*[mLimit];
+// 	mIndexToIDArray = new int[mLimit];
+// 	mIdToIndexArray = new int[mLimit];
+// }
 
-/*
- * --INFO--
- * Address:	801C4A48
- * Size:	00009C
- */
-void StateMachine<VsGameSection>::transit(VsGameSection* section, int stateID, StateArg* arg)
-{
+// /*
+//  * --INFO--
+//  * Address:	801C4A48
+//  * Size:	00009C
+//  */
+// void StateMachine<VsGameSection>::transit(VsGameSection* section, int stateID, StateArg* arg)
+// {
 
-	int stateIndex              = mIdToIndexArray[stateID];
-	VsGame::State* currentState = section->mState;
-	if (currentState) {
-		currentState->cleanup(section);
-		mCurrentID = currentState->mId;
-	}
-	if (stateIndex >= mLimit) {
-		while (true)
-			;
-	}
-	VsGame::State* state = static_cast<VsGame::State*>(mStates[stateIndex]);
-	section->mState      = state;
-	state->init(section, arg);
-}
+// 	int stateIndex              = mIdToIndexArray[stateID];
+// 	VsGame::State* currentState = section->mState;
+// 	if (currentState) {
+// 		currentState->cleanup(section);
+// 		mCurrentID = currentState->mId;
+// 	}
+// 	if (stateIndex >= mLimit) {
+// 		while (true)
+// 			;
+// 	}
+// 	VsGame::State* state = static_cast<VsGame::State*>(mStates[stateIndex]);
+// 	section->mState      = state;
+// 	state->init(section, arg);
+// }
 
-/*
- * --INFO--
- * Address:	801C4AEC
- * Size:	000084
- */
-void StateMachine<VsGameSection>::registerState(FSMState<VsGameSection>* state)
-{
-	if (mCount >= mLimit) {
-		return;
-	}
-	mStates[mCount] = state;
-	bool inBounds;
-	if (state->mId < 0 || state->mId >= mLimit) {
-		inBounds = false;
-	} else {
-		inBounds = true;
-	}
+// /*
+//  * --INFO--
+//  * Address:	801C4AEC
+//  * Size:	000084
+//  */
+// void StateMachine<VsGameSection>::registerState(FSMState<VsGameSection>* state)
+// {
+// 	if (mCount >= mLimit) {
+// 		return;
+// 	}
+// 	mStates[mCount] = state;
+// 	bool inBounds;
+// 	if (state->mId < 0 || state->mId >= mLimit) {
+// 		inBounds = false;
+// 	} else {
+// 		inBounds = true;
+// 	}
 
-	if (!inBounds) {
-		return;
-	}
+// 	if (!inBounds) {
+// 		return;
+// 	}
 
-	state->mStateMachine        = this;
-	mIndexToIDArray[mCount]     = state->mId;
-	mIdToIndexArray[state->mId] = mCount;
-	mCount++;
-}
+// 	state->mStateMachine        = this;
+// 	mIndexToIDArray[mCount]     = state->mId;
+// 	mIdToIndexArray[state->mId] = mCount;
+// 	mCount++;
+// }
 
-/*
- * --INFO--
- * Address:	801C4B70
- * Size:	000038
- */
-void StateMachine<VsGameSection>::exec(VsGameSection* section)
-{
-	if (section->mState) {
-		section->mState->exec(section);
-	}
-}
+// /*
+//  * --INFO--
+//  * Address:	801C4B70
+//  * Size:	000038
+//  */
+// void StateMachine<VsGameSection>::exec(VsGameSection* section)
+// {
+// 	if (section->mState) {
+// 		section->mState->exec(section);
+// 	}
+// }
 
 } // namespace Game
